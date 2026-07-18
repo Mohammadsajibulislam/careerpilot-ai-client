@@ -9,6 +9,9 @@ import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/ui/Toast";
 import AuthShell from "@/components/auth/AuthShell";
 import AuthField from "@/components/auth/AuthField";
+import DemoLoginButton from "@/components/auth/DemoLoginButton";
+import GoogleButton from "@/components/auth/GoogleButton";
+import AuthDivider from "@/components/auth/AuthDivider";
 
 export default function SigninPage() {
   const router = useRouter();
@@ -45,7 +48,21 @@ export default function SigninPage() {
         Pick up your job search where you left off.
       </p>
 
-      <form onSubmit={handleSignin} className="flex flex-col gap-4 mt-8">
+      <div className="flex flex-col gap-3 mt-8">
+        <DemoLoginButton
+          setLoading={setLoading}
+          onSuccess={() => {
+            showToast("Signed in with demo account", "success");
+            router.push("/");
+          }}
+          onError={(msg) => showToast(msg, "error")}
+        />
+        <GoogleButton />
+      </div>
+
+      <AuthDivider />
+
+      <form onSubmit={handleSignin} className="flex flex-col gap-4">
         <AuthField label="Email" type="email" placeholder="you@example.com" value={email} onChange={setEmail} icon={IoMailOutline} />
         <AuthField label="Password" type="password" placeholder="Your password" value={password} onChange={setPassword} icon={IoLockClosedOutline} />
 

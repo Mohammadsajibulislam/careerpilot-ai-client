@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/ui/Toast";
 import AuthShell from "@/components/auth/AuthShell";
 import AuthField from "@/components/auth/AuthField";
+import GoogleButton from "@/components/auth/GoogleButton";
+import AuthDivider from "@/components/auth/AuthDivider";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -52,7 +54,13 @@ export default function SignupPage() {
         Start tracking applications in minutes.
       </p>
 
-      <form onSubmit={handleSignup} className="flex flex-col gap-4 mt-8">
+      <div className="mt-8">
+        <GoogleButton />
+      </div>
+
+      <AuthDivider />
+
+      <form onSubmit={handleSignup} className="flex flex-col gap-4">
         <AuthField label="Full name" type="text" placeholder="Jane Doe" value={name} onChange={setName} icon={IoPersonOutline} />
         <AuthField label="Email" type="email" placeholder="you@example.com" value={email} onChange={setEmail} icon={IoMailOutline} />
         <AuthField label="Password" type="password" placeholder="At least 6 characters" value={password} onChange={setPassword} icon={IoLockClosedOutline} />
@@ -70,7 +78,7 @@ export default function SignupPage() {
 
       <p className="text-sm mt-8 text-center" style={{ color: "var(--cp-text-muted)" }}>
         Already have an account?{" "}
-        <Link href="/auth/signin" className="font-medium" style={{ color: "var(--cp-teal)" }}>
+        <Link href="/auth/signup" className="font-medium" style={{ color: "var(--cp-teal)" }}>
           Sign in
         </Link>
       </p>
