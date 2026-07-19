@@ -18,6 +18,7 @@ import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/ui/Toast";
 import JobCard from "@/components/jobs/JobCard";
+import MatchScoreCard from "@/components/jobs/MatchScoreCard";
 import { Job } from "@/types/job";
 
 export default function JobDetailsPage() {
@@ -218,6 +219,12 @@ export default function JobDetailsPage() {
           </ul>
         </div>
       )}
+
+      {/* AI Match Score */}
+      <div className="mb-10">
+        <h2 className="font-display text-lg font-semibold mb-4">Your fit</h2>
+        <MatchScoreCard jobId={job._id} />
+      </div>
 
       {/* Related jobs */}
       {relatedJobs.length > 0 && (

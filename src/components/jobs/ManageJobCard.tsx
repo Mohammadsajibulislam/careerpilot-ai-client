@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IoEyeOutline, IoTrashOutline } from "react-icons/io5";
+import { IoEyeOutline, IoTrashOutline, IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { Job } from "@/types/job";
 
 const statusOptions: Job["status"][] = ["saved", "applied", "interview", "offer", "rejected"];
@@ -46,6 +46,14 @@ export default function ManageJobCard({ job, onStatusChange, onDelete }: ManageJ
         >
           <IoEyeOutline size={14} />
           View
+        </Link>
+        <Link
+          href={`/jobs/${job._id}/interview-prep`}
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium"
+          style={{ background: "var(--cp-teal-dim)", color: "var(--cp-teal)" }}
+        >
+          <IoChatbubbleEllipsesOutline size={14} />
+          Prep
         </Link>
         <button
           onClick={() => onDelete(job._id)}

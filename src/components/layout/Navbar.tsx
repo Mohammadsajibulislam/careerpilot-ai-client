@@ -22,7 +22,7 @@ const loggedInLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/jobs/manage", label: "My pipeline" },
   { href: "/jobs/add", label: "Save a job" },
-  { href: "/dashboard/interview-prep", label: "Interview prep" },
+  { href: "/dashboard/profile", label: "My profile" },
 ];
 
 export default function Navbar() {
