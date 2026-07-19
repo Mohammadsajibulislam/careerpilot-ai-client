@@ -72,7 +72,7 @@ export default function InterviewPrepPage() {
   }
 
   return (
-    <div className="px-6 py-10 max-w-3xl mx-auto flex flex-col" style={{ minHeight: "calc(100vh - 4rem)" }}>
+    <div className="px-6 py-10 max-w-3xl mx-auto flex flex-col" style={{ minHeight: "calc(100dvh - 4rem)" }}>
       <Link
         href={`/jobs/${id}`}
         className="inline-flex items-center gap-2 text-sm mb-6"

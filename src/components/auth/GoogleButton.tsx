@@ -5,9 +5,11 @@ import { authClient } from "@/lib/auth-client";
 
 export default function GoogleButton() {
   const handleGoogleLogin = async () => {
+    const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
+
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: `${clientUrl}/`,
     });
   };
 

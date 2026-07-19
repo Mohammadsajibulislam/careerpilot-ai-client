@@ -58,11 +58,11 @@ export default function JobFilters({
       </div>
 
       {/* Filters row */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3">
         <select
           value={category}
           onChange={(e) => onCategoryChange(e.target.value)}
-          className="rounded-lg py-2 px-3 text-sm outline-none"
+          className="rounded-lg py-2 px-3 text-sm outline-none w-full sm:w-auto"
           style={selectStyle}
         >
           {categories.map((c) => (
@@ -75,7 +75,7 @@ export default function JobFilters({
         <select
           value={jobType}
           onChange={(e) => onJobTypeChange(e.target.value)}
-          className="rounded-lg py-2 px-3 text-sm outline-none"
+          className="rounded-lg py-2 px-3 text-sm outline-none w-full sm:w-auto"
           style={selectStyle}
         >
           {jobTypes.map((t) => (
@@ -88,7 +88,7 @@ export default function JobFilters({
         <select
           value={sort}
           onChange={(e) => onSortChange(e.target.value)}
-          className="rounded-lg py-2 px-3 text-sm outline-none ml-auto"
+          className="rounded-lg py-2 px-3 text-sm outline-none w-full sm:w-auto sm:ml-auto"
           style={selectStyle}
         >
           {sortOptions.map((s) => (
