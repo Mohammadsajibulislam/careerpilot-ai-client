@@ -1,14 +1,10 @@
-"use client";
+import Hero from "@/components/home/Hero";
 
-import { authClient } from "@/lib/auth-client";
-
-export default function Home() {
-  const { data: session } = authClient.useSession();
-
+export default function HomePage() {
   return (
-    <div className="p-10">
-      <h1>CareerPilot AI</h1>
-      <p>Session: {session ? session.user.email : "Not logged in"}</p>
-    </div>
+    <>
+      <Hero />
+      {/* বাকি ৬টা section পরের step গুলোতে যোগ হবে */}
+    </>
   );
 }
