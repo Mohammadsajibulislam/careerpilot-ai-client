@@ -1,21 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { IoPersonCircleOutline, IoSaveOutline, IoCloseCircleOutline } from "react-icons/io5";
+import { useState, useEffect, useRef } from "react";
+import { IoPersonCircleOutline, IoSaveOutline, IoCloseCircleOutline, IoCloudUploadOutline } from "react-icons/io5";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { fetchProfile, updateProfile } from "@/lib/api/profile";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/ui/Toast";
 
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+
+async function uploadResume(file: File): Promise<{ message: string; fileName: string; textLength: number }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${SERVER_URL}/api/upload/resume`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Upload failed");
+  }
+
+  return res.json();
+}
+
 export default function ProfilePage() {
   const { session, isPending } = useRequireAuth();
   const { toast, showToast, hideToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [resumeText, setResumeText] = useState("");
+  const [resumeFileName, setResumeFileName] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -57,6 +80,23 @@ export default function ProfilePage() {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await uploadResume(file);
+      setResumeFileName(result.fileName);
+      showToast("Resume uploaded — text extracted", "success");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Upload failed", "error");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   if (isPending || !session || loading) {
     return <div className="min-h-screen" />;
   }
@@ -76,6 +116,40 @@ export default function ProfilePage() {
         This is what the AI compares roles against for match scoring — the more detail, the better the match.
       </p>
 
+      {/* File upload */}
+      <div className="mb-8">
+        <label className="font-mono-label text-[11px] uppercase block mb-2" style={{ color: "var(--cp-text-faint)" }}>
+          Upload resume (PDF, DOCX, or TXT)
+        </label>
+        <div
+          className="flex items-center gap-3 p-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
+          style={{ background: "var(--cp-surface)", border: "1px dashed var(--cp-border)" }}
+          role="button"
+          tabIndex={0}
+          aria-label="Upload resume file"
+          onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
+        >
+          <IoCloudUploadOutline size={24} style={{ color: "var(--cp-accent)" }} />
+          <div>
+            <p className="text-sm font-medium">
+              {uploading ? "Uploading..." : resumeFileName ? resumeFileName : "Click to upload"}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--cp-text-faint)" }}>
+              Max 5 MB. Text will be extracted automatically.
+            </p>
+          </div>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.docx,.txt"
+          onChange={handleFileUpload}
+          className="hidden"
+          aria-hidden="true"
+        />
+      </div>
+
       <div className="mb-8">
         <label className="font-mono-label text-[11px] uppercase block mb-2" style={{ color: "var(--cp-text-faint)" }}>
           Skills
@@ -88,25 +162,28 @@ export default function ProfilePage() {
             placeholder="Type a skill and press Enter"
             className="flex-1 rounded-lg py-2.5 px-4 text-sm outline-none"
             style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)", color: "var(--cp-text)" }}
+            aria-label="Add a skill"
           />
           <button
             onClick={addSkill}
             type="button"
             className="px-4 rounded-lg text-sm font-medium"
             style={{ background: "var(--cp-accent-dim)", color: "var(--cp-accent)" }}
+            aria-label="Add skill"
           >
             Add
           </button>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="list" aria-label="Your skills">
           {skills.map((skill) => (
             <span
               key={skill}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs"
               style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)", color: "var(--cp-text-muted)" }}
+              role="listitem"
             >
               {skill}
-              <button onClick={() => removeSkill(skill)} type="button">
+              <button onClick={() => removeSkill(skill)} type="button" aria-label={`Remove ${skill}`}>
                 <IoCloseCircleOutline size={14} />
               </button>
             </span>

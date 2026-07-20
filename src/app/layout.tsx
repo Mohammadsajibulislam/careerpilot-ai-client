@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import QueryProvider from "@/lib/QueryProvider";
+import { ThemeProvider } from "@/context/ThemeContext";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -36,7 +38,9 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -12,10 +12,16 @@ const footerLinks = {
     { href: "/jobs/add", label: "Save a job" },
     { href: "/dashboard", label: "Dashboard" },
   ],
+  Resources: [
+    { href: "/blog", label: "Blog" },
+    { href: "/help", label: "Help & support" },
+    { href: "/cover-letter", label: "Cover letter generator" },
+  ],
   Company: [
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
     { href: "/privacy", label: "Privacy" },
+    { href: "/terms", label: "Terms" },
   ],
 };
 
@@ -98,7 +104,7 @@ export default function Footer() {
           className="mt-12 pt-6 border-t text-xs text-center"
           style={{ borderColor: "var(--cp-border-soft)", color: "var(--cp-text-faint)" }}
         >
-          © {new Date().getFullYear()} CareerPilot AI. Built as a student project.
+          &copy; {new Date().getFullYear()} CareerPilot AI. Built as a student project.
         </div>
       </div>
     </footer>

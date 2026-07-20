@@ -10,10 +10,12 @@ import {
   IoLogOutOutline,
 } from "react-icons/io5";
 import { authClient } from "@/lib/auth-client";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const loggedOutLinks = [
   { href: "/jobs", label: "Browse jobs" },
   { href: "/about", label: "About" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -22,6 +24,7 @@ const loggedInLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/jobs/manage", label: "My pipeline" },
   { href: "/jobs/add", label: "Save a job" },
+  { href: "/cover-letter", label: "Cover letter" },
   { href: "/dashboard/profile", label: "My profile" },
 ];
 
@@ -73,6 +76,7 @@ export default function Navbar() {
 
         {/* Desktop auth actions */}
         <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           {session ? (
             <button
               onClick={handleLogout}
@@ -144,11 +148,11 @@ export default function Navbar() {
               </button>
             ) : (
               <>
-                <Link href="" onClick={() => setMobileOpen(false)} className="text-sm" style={{ color: "var(--cp-text-muted)" }}>
+                <Link href="/signin" onClick={() => setMobileOpen(false)} className="text-sm" style={{ color: "var(--cp-text-muted)" }}>
                   Sign in
                 </Link>
                 <Link
-                  href="/auth/signup"
+                  href="/signup"
                   onClick={() => setMobileOpen(false)}
                   className="text-sm px-4 py-2 rounded-lg font-medium text-center"
                   style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}

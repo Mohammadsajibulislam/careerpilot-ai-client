@@ -13,12 +13,13 @@ import {
   IoOpenOutline,
   IoCheckmarkCircle,
 } from "react-icons/io5";
-import { fetchJobById, fetchJobs } from "@/lib/api/jobs";
+import { fetchJobById, fetchJobs, addJob } from "@/lib/api/jobs";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/ui/Toast";
 import JobCard from "@/components/jobs/JobCard";
 import MatchScoreCard from "@/components/jobs/MatchScoreCard";
+import Reviews from "@/components/jobs/Reviews";
 import { Job } from "@/types/job";
 
 export default function JobDetailsPage() {
@@ -64,10 +65,30 @@ export default function JobDetailsPage() {
       router.push("/signin");
       return;
     }
+    if (!job) return;
+
     setSaving(true);
-    // পরের step-এ POST /api/jobs call বসবে এখানে (user-এর নিজের pipeline-এ save করার জন্য)
-    setSaving(false);
-    showToast("Saved to your pipeline", "success");
+    try {
+      await addJob({
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        jobType: job.jobType,
+        category: job.category,
+        salaryMin: job.salaryMin,
+        salaryMax: job.salaryMax,
+        shortDescription: job.shortDescription,
+        description: job.description,
+        requirements: job.requirements,
+        imageUrl: job.imageUrl,
+        applyUrl: job.applyUrl,
+      });
+      showToast("Saved to your pipeline", "success");
+    } catch {
+      showToast("Failed to save job", "error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -226,9 +247,12 @@ export default function JobDetailsPage() {
         <MatchScoreCard jobId={job._id} />
       </div>
 
+      {/* Reviews & Ratings */}
+      <Reviews job={job} />
+
       {/* Related jobs */}
       {relatedJobs.length > 0 && (
-        <div>
+        <div className="mt-12">
           <h2 className="font-display text-lg font-semibold mb-5">Related roles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {relatedJobs.map((j) => (
