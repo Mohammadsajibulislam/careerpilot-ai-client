@@ -30,6 +30,7 @@ export default function SignupPage() {
     }
 
     setLoading(true);
+    console.log("Signing up with:", { name, email, password });
     const { error } = await authClient.signUp.email({ name, email, password });
     setLoading(false);
 
