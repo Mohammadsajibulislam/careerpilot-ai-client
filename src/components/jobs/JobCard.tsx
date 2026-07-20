@@ -15,12 +15,15 @@ export default function JobCard({ job }: { job: Job }) {
       style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)" }}
     >
       <div className="relative w-full h-40 shrink-0" style={{ background: "var(--cp-bg)" }}>
-        <Image
-          src={job.imageUrl || "/job-placeholder.png"}
-          alt={job.company}
-          fill
-          className="object-cover"
-        />
+        {job.imageUrl && /^(https?:)?\/\//.test(job.imageUrl) ? (
+          <img
+            src={job.imageUrl}
+            alt={job.company}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <Image src={job.imageUrl || "/job-placeholder.png"} alt={job.company} fill className="object-cover" />
+        )}
         <span
           className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11px] font-mono-label uppercase"
           style={{ background: "var(--cp-bg)", color: "var(--cp-accent)", border: "1px solid var(--cp-border)" }}

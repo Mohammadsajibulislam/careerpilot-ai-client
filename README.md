@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CareerPilot AI — Client
 
-## Getting Started
+Frontend application for CareerPilot AI built with Next.js and TypeScript.
 
-First, run the development server:
+## Overview
+
+This repo is the client-side app for CareerPilot AI. It includes:
+- Job listing UI
+- Manual job save form
+- Authentication support via Better Auth
+- Dashboard and pipeline management
+- Image preview for saved job listings
+
+## Technology
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+- TanStack React Query
+- react-icons
+
+## Environment
+
+Copy the `.env` file from `.env.example` if available, then configure:
+
+```dotenv
+NEXT_PUBLIC_SERVER_URL=https://careerpilot-ai-server.vercel.app
+NEXT_PUBLIC_CLIENT_URL=https://careerpilot-ai-client.vercel.app
+BETTER_AUTH_URL=https://careerpilot-ai-client.vercel.app
+CLIENT_URL=https://careerpilot-ai-client.vercel.app
+```
+
+For local development, use:
+
+```dotenv
+NEXT_PUBLIC_SERVER_URL=http://localhost:5000
+NEXT_PUBLIC_CLIENT_URL=http://localhost:3000
+BETTER_AUTH_URL=http://localhost:3000
+CLIENT_URL=http://localhost:3000
+```
+
+## Install
+
+```bash
+npm install
+```
+
+## Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Notes
 
-To learn more about Next.js, take a look at the following resources:
+- Job card images use a fallback for external URLs. If you want Next Image optimization, add the source domain to `next.config.ts` under `images.remotePatterns`.
+- The job form saves `imageUrl` values to the server and the image is displayed on the job card.
+- Environment variables are loaded from `.env` at the repo root.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/components/jobs/JobCard.tsx` — job card UI and image rendering
+- `src/app/(main)/jobs/add/page.tsx` — add job form
+- `src/lib/api/jobs.ts` — API requests for job operations
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This client can be deployed on Vercel or any static server that supports Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Use the repo license or add one if needed.
