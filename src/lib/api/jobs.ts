@@ -21,9 +21,7 @@ export async function fetchJobs(params: FetchJobsParams): Promise<JobsResponse> 
   query.set("page", String(params.page || 1));
   query.set("limit", String(params.limit || 8));
 
-  const res = await fetch(`${SERVER_URL}/api/jobs?${query.toString()}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(`${SERVER_URL}/api/jobs?${query.toString()}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch jobs");
@@ -33,7 +31,7 @@ export async function fetchJobs(params: FetchJobsParams): Promise<JobsResponse> 
 }
 
 export async function fetchJobById(id: string): Promise<Job> {
-  const res = await fetch(`${SERVER_URL}/api/jobs/${id}`, { cache: "no-store" });
+  const res = await fetch(`${SERVER_URL}/api/jobs/${id}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch job");
@@ -75,7 +73,6 @@ export async function addJob(data: NewJobInput): Promise<{ message: string; jobI
 export async function fetchMyJobs(): Promise<{ jobs: Job[] }> {
   const res = await fetch(`${SERVER_URL}/api/jobs/my/all`, {
     credentials: "include",
-    cache: "no-store",
   });
 
   if (!res.ok) {

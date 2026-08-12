@@ -18,7 +18,6 @@ export async function generateMatch(jobId: string): Promise<MatchResult> {
 export async function fetchExistingMatch(jobId: string): Promise<MatchResult | null> {
   const res = await fetch(`${SERVER_URL}/api/match/${jobId}`, {
     credentials: "include",
-    cache: "no-store",
   });
 
   if (res.status === 404) return null;

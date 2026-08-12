@@ -5,7 +5,6 @@ const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"
 export async function fetchProfile(): Promise<UserProfile> {
   const res = await fetch(`${SERVER_URL}/api/profile`, {
     credentials: "include",
-    cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to fetch profile");
   return res.json();

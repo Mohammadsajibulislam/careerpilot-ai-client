@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import { authClient } from "@/lib/auth-client";
@@ -21,7 +21,7 @@ interface Review {
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
 async function fetchReviews(jobId: string): Promise<{ reviews: Review[] }> {
-  const res = await fetch(`${SERVER_URL}/api/reviews/${jobId}`, { cache: "no-store" });
+  const res = await fetch(`${SERVER_URL}/api/reviews/${jobId}`);
   if (!res.ok) throw new Error("Failed to fetch reviews");
   return res.json();
 }

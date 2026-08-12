@@ -5,7 +5,6 @@ const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"
 export async function fetchChatHistory(jobId: string): Promise<ChatMessage[]> {
   const res = await fetch(`${SERVER_URL}/api/interview-chat/${jobId}`, {
     credentials: "include",
-    cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to load conversation");
   const data = await res.json();
