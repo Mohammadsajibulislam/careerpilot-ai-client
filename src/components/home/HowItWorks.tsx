@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import {
   IoBookmarkOutline,
   IoSparklesOutline,
@@ -42,27 +43,45 @@ const steps = [
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.15 },
+    transition: { staggerChildren: 0.18 },
   },
 };
 
 const stepVariants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 28, scale: 0.95, filter: "blur(4px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" as const },
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
 };
+
+function ConnectingLine({ index }: { index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="hidden md:block absolute top-6 left-[calc(100%_-_0.5rem)] w-8 h-px origin-left"
+      style={{ background: "var(--cp-border)" }}
+      initial={{ scaleX: 0, opacity: 0 }}
+      animate={inView ? { scaleX: 1, opacity: 1 } : {}}
+      transition={{ delay: 0.4 + index * 0.18, duration: 0.5, ease: "easeOut" }}
+    />
+  );
+}
 
 export default function HowItWorks() {
   return (
     <section className="px-6 py-20 max-w-6xl mx-auto">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
         className="max-w-xl mb-14"
       >
         <p
@@ -91,31 +110,28 @@ export default function HowItWorks() {
               variants={stepVariants}
               className="relative group"
             >
-              {i < steps.length - 1 && (
-                <motion.div
-                  className="hidden md:block absolute top-6 left-[calc(100%_-_0.5rem)] w-8 h-px"
-                  style={{ background: "var(--cp-border)" }}
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + i * 0.15, duration: 0.4 }}
-                />
-              )}
-              <span
+              <ConnectingLine index={i} />
+              <motion.span
                 className="font-mono-label text-xs block mb-4"
                 style={{ color: "var(--cp-text-faint)" }}
               >
                 {step.number}
-              </span>
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-200 group-hover:scale-110"
+              </motion.span>
+              <motion.div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative"
                 style={{
                   background: "var(--cp-surface)",
                   border: "1px solid var(--cp-border)",
                 }}
+                whileHover={{
+                  scale: 1.15,
+                  rotate: [0, -5, 5, 0],
+                  boxShadow: "0 0 20px var(--cp-accent-dim)",
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
                 <Icon size={20} style={{ color: "var(--cp-accent)" }} />
-              </div>
+              </motion.div>
               <h3 className="font-display text-lg font-semibold mb-2">
                 {step.title}
               </h3>

@@ -62,12 +62,12 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 12 },
+  hidden: { opacity: 0, scale: 0.6, y: 16 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
+    transition: { type: "spring" as const, stiffness: 400, damping: 18 },
   },
 };
 
@@ -78,7 +78,13 @@ export default function TechStack() {
       style={{ borderColor: "var(--cp-border-soft)" }}
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
           <p
             className="font-mono-label text-xs uppercase"
             style={{ color: "var(--cp-teal)" }}
@@ -88,7 +94,7 @@ export default function TechStack() {
           <h2 className="font-display text-3xl md:text-4xl font-semibold mt-3">
             A modern stack, chosen with intent.
           </h2>
-        </div>
+        </motion.div>
 
         <div className="space-y-10">
           {categories.map((cat) => (
@@ -112,14 +118,24 @@ export default function TechStack() {
                     <motion.div
                       key={tech.name}
                       variants={itemVariants}
-                      whileHover={{ y: -4, scale: 1.05 }}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl cursor-default transition-shadow duration-200"
+                      whileHover={{
+                        y: -6,
+                        scale: 1.08,
+                        boxShadow: "0 8px 30px var(--cp-accent-dim)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl cursor-default relative overflow-hidden"
                       style={{
                         background: "var(--cp-surface)",
                         border: "1px solid var(--cp-border)",
                       }}
                     >
-                      <Icon size={18} style={{ color: "var(--cp-accent)" }} />
+                      <motion.div
+                        whileHover={{ rotate: [0, -15, 15, 0] }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <Icon size={18} style={{ color: "var(--cp-accent)" }} />
+                      </motion.div>
                       <span className="text-sm font-medium">{tech.name}</span>
                     </motion.div>
                   );

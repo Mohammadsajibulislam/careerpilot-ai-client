@@ -55,7 +55,13 @@ export default function AppPreview() {
   return (
     <section className="px-6 py-20">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
           <p
             className="font-mono-label text-xs uppercase"
             style={{ color: "var(--cp-accent)" }}
@@ -65,7 +71,7 @@ export default function AppPreview() {
           <h2 className="font-display text-3xl md:text-4xl font-semibold mt-3">
             A product, not just a concept.
           </h2>
-        </div>
+        </motion.div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           {tabs.map((tab) => {
@@ -75,15 +81,26 @@ export default function AppPreview() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                className="relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                 style={{
-                  background: isActive ? "var(--cp-accent-dim)" : "var(--cp-surface)",
-                  border: `1px solid ${isActive ? "var(--cp-accent)" : "var(--cp-border)"}`,
                   color: isActive ? "var(--cp-accent)" : "var(--cp-text-muted)",
                 }}
               >
-                <Icon size={16} />
-                {tab.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 rounded-lg"
+                    style={{
+                      background: "var(--cp-accent-dim)",
+                      border: "1px solid var(--cp-accent)",
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Icon size={16} />
+                  {tab.label}
+                </span>
               </button>
             );
           })}
@@ -96,29 +113,33 @@ export default function AppPreview() {
             border: "1px solid var(--cp-border)",
           }}
         >
-          <div
+          <motion.div
             className="absolute inset-0 opacity-20 pointer-events-none"
-            style={{
+            animate={{
               background: `radial-gradient(circle at 50% 0%, ${active.color}33, transparent 60%)`,
             }}
+            transition={{ duration: 0.5 }}
           />
 
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -16, filter: "blur(4px)" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
               className="relative p-8 md:p-12"
             >
               <div className="max-w-3xl mx-auto">
-                <div
+                <motion.div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-6"
                   style={{ background: `${active.color}26` }}
+                  initial={{ scale: 0.8, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   <active.icon size={22} style={{ color: active.color }} />
-                </div>
+                </motion.div>
                 <h3 className="font-display text-2xl md:text-3xl font-semibold mb-3">
                   {active.title}
                 </h3>
@@ -176,8 +197,13 @@ function PipelineMockup() {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {columns.map((col) => (
-        <div key={col.title}>
+      {columns.map((col, ci) => (
+        <motion.div
+          key={col.title}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: ci * 0.08 }}
+        >
           <div className="flex items-center gap-2 mb-3">
             <div
               className="w-2 h-2 rounded-full"
@@ -191,9 +217,12 @@ function PipelineMockup() {
             </span>
           </div>
           <div className="space-y-2">
-            {col.jobs.map((job) => (
-              <div
+            {col.jobs.map((job, ji) => (
+              <motion.div
                 key={job}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: ci * 0.08 + ji * 0.05 }}
                 className="p-2.5 rounded-lg text-xs"
                 style={{
                   background: "var(--cp-surface)",
@@ -202,7 +231,7 @@ function PipelineMockup() {
                 }}
               >
                 {job}
-              </div>
+              </motion.div>
             ))}
             {col.jobs.length === 0 && (
               <div
@@ -216,7 +245,7 @@ function PipelineMockup() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );
@@ -232,12 +261,15 @@ function MatchingMockup() {
             Linear • Remote
           </p>
         </div>
-        <div
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
           className="px-3 py-1 rounded-full text-xs font-semibold"
           style={{ background: "var(--cp-accent-dim)", color: "var(--cp-accent)" }}
         >
           92% Match
-        </div>
+        </motion.div>
       </div>
       <div
         className="p-3 rounded-lg text-xs"
@@ -254,9 +286,12 @@ function MatchingMockup() {
         of frontend experience which matches your profile.
       </div>
       <div className="flex gap-2">
-        {["React", "TypeScript", "Next.js", "GraphQL"].map((skill) => (
-          <span
+        {["React", "TypeScript", "Next.js", "GraphQL"].map((skill, i) => (
+          <motion.span
             key={skill}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 + i * 0.05, type: "spring", stiffness: 400 }}
             className="px-2 py-0.5 rounded text-[10px]"
             style={{
               background: "var(--cp-accent-dim)",
@@ -264,7 +299,7 @@ function MatchingMockup() {
             }}
           >
             {skill}
-          </span>
+          </motion.span>
         ))}
       </div>
     </div>
@@ -287,8 +322,11 @@ function InterviewMockup() {
   return (
     <div className="space-y-3">
       {messages.map((msg, i) => (
-        <div
+        <motion.div
           key={i}
+          initial={{ opacity: 0, y: 8, x: msg.role === "user" ? 8 : -8 }}
+          animate={{ opacity: 1, y: 0, x: 0 }}
+          transition={{ delay: i * 0.2 }}
           className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
         >
           <div
@@ -302,21 +340,22 @@ function InterviewMockup() {
           >
             {msg.text}
           </div>
-        </div>
+        </motion.div>
       ))}
       <div className="flex items-center gap-1.5 pt-1">
-        <div
-          className="w-1.5 h-1.5 rounded-full animate-bounce"
-          style={{ background: "var(--cp-text-faint)", animationDelay: "0ms" }}
-        />
-        <div
-          className="w-1.5 h-1.5 rounded-full animate-bounce"
-          style={{ background: "var(--cp-text-faint)", animationDelay: "150ms" }}
-        />
-        <div
-          className="w-1.5 h-1.5 rounded-full animate-bounce"
-          style={{ background: "var(--cp-text-faint)", animationDelay: "300ms" }}
-        />
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: "var(--cp-text-faint)" }}
+            animate={{ y: [0, -6, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              delay: i * 0.15,
+            }}
+          />
+        ))}
       </div>
     </div>
   );
@@ -363,7 +402,10 @@ function CoverMockup() {
           </div>
         </div>
       </div>
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
         className="p-4 rounded-lg text-xs leading-relaxed"
         style={{
           background: "var(--cp-surface)",
@@ -375,7 +417,7 @@ function CoverMockup() {
         Frontend Developer position. With over 3 years of experience building
         scalable React applications, I am excited about the opportunity to
         contribute to your team...
-      </div>
+      </motion.div>
       <div className="flex gap-2">
         <span
           className="px-3 py-1 rounded-lg text-[10px]"

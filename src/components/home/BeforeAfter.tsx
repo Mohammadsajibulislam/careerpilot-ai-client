@@ -29,6 +29,23 @@ const comparisons = [
   },
 ];
 
+const rowVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const cellVariants = {
+  hidden: { opacity: 0, x: -16, filter: "blur(2px)" },
+  visible: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 export default function BeforeAfter() {
   return (
     <section
@@ -36,7 +53,13 @@ export default function BeforeAfter() {
       style={{ borderColor: "var(--cp-border-soft)" }}
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
           <p
             className="font-mono-label text-xs uppercase"
             style={{ color: "var(--cp-accent)" }}
@@ -46,7 +69,7 @@ export default function BeforeAfter() {
           <h2 className="font-display text-3xl md:text-4xl font-semibold mt-3">
             Spreadsheets vs CareerPilot.
           </h2>
-        </div>
+        </motion.div>
 
         <div
           className="rounded-2xl overflow-hidden"
@@ -79,45 +102,67 @@ export default function BeforeAfter() {
             </div>
           </div>
 
-          {comparisons.map((row, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="grid grid-cols-2"
-              style={{
-                borderBottom:
-                  i < comparisons.length - 1 ? "1px solid var(--cp-border)" : "none",
-              }}
-            >
-              <div
-                className="flex items-start gap-3 px-6 py-4"
-                style={{ borderRight: "1px solid var(--cp-border)" }}
+          <motion.div
+            variants={rowVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {comparisons.map((row, i) => (
+              <motion.div
+                key={i}
+                variants={cellVariants}
+                className="grid grid-cols-2"
+                style={{
+                  borderBottom:
+                    i < comparisons.length - 1 ? "1px solid var(--cp-border)" : "none",
+                }}
+                whileHover={{
+                  backgroundColor: "var(--cp-surface-hover)",
+                  transition: { duration: 0.15 },
+                }}
               >
-                <IoCloseCircleOutline
-                  size={18}
-                  className="mt-0.5 shrink-0"
-                  style={{ color: "#ef4444" }}
-                />
-                <span
-                  className="text-sm"
-                  style={{ color: "var(--cp-text-muted)" }}
+                <div
+                  className="flex items-start gap-3 px-6 py-4"
+                  style={{ borderRight: "1px solid var(--cp-border)" }}
                 >
-                  {row.before}
-                </span>
-              </div>
-              <div className="flex items-start gap-3 px-6 py-4">
-                <IoCheckmarkCircleOutline
-                  size={18}
-                  className="mt-0.5 shrink-0"
-                  style={{ color: "var(--cp-accent)" }}
-                />
-                <span className="text-sm">{row.after}</span>
-              </div>
-            </motion.div>
-          ))}
+                  <motion.div
+                    initial={{ scale: 0, rotate: -90 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + i * 0.08, type: "spring", stiffness: 400 }}
+                  >
+                    <IoCloseCircleOutline
+                      size={18}
+                      className="mt-0.5 shrink-0"
+                      style={{ color: "#ef4444" }}
+                    />
+                  </motion.div>
+                  <span
+                    className="text-sm"
+                    style={{ color: "var(--cp-text-muted)" }}
+                  >
+                    {row.before}
+                  </span>
+                </div>
+                <div className="flex items-start gap-3 px-6 py-4">
+                  <motion.div
+                    initial={{ scale: 0, rotate: 90 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.08, type: "spring", stiffness: 400 }}
+                  >
+                    <IoCheckmarkCircleOutline
+                      size={18}
+                      className="mt-0.5 shrink-0"
+                      style={{ color: "var(--cp-accent)" }}
+                    />
+                  </motion.div>
+                  <span className="text-sm">{row.after}</span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

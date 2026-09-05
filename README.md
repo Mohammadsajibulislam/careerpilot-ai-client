@@ -5,6 +5,7 @@ Frontend application for CareerPilot AI built with Next.js and TypeScript.
 ## Overview
 
 This repo is the client-side app for CareerPilot AI. It includes:
+
 - Job listing UI
 - Manual job save form
 - Authentication support via Better Auth

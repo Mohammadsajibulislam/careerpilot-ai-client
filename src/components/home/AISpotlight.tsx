@@ -7,6 +7,22 @@ import {
   IoCheckmarkCircle,
 } from "react-icons/io5";
 
+const listVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08, delayChildren: 0.3 },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, x: -12 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
+
 export default function AISpotlight() {
   return (
     <section
@@ -15,10 +31,10 @@ export default function AISpotlight() {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="max-w-xl mb-14"
         >
           <p
@@ -34,20 +50,25 @@ export default function AISpotlight() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="p-8 rounded-2xl transition-shadow duration-200 hover:shadow-lg hover:shadow-[var(--cp-accent)]/5"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            whileHover={{ y: -6, transition: { duration: 0.2 } }}
+            className="p-8 rounded-2xl relative overflow-hidden"
             style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)" }}
           >
-            <div
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 pointer-events-none"
+              style={{ background: "var(--cp-accent)" }}
+            />
+            <motion.div
               className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
               style={{ background: "var(--cp-accent-dim)" }}
+              whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+              transition={{ duration: 0.4 }}
             >
               <IoSparklesOutline size={20} style={{ color: "var(--cp-accent)" }} />
-            </div>
+            </motion.div>
             <h3 className="font-display text-xl font-semibold mb-2">
               Smart match engine
             </h3>
@@ -55,14 +76,21 @@ export default function AISpotlight() {
               Every saved role gets a match score against your resume, with a
               plain-language reason behind it.
             </p>
-            <ul className="flex flex-col gap-2.5">
+            <motion.ul
+              className="flex flex-col gap-2.5"
+              variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               {[
                 "Scores each role against your actual skills",
                 "Explains the match — not just a number",
                 "Refines as you mark roles interested or not",
               ].map((point) => (
-                <li
+                <motion.li
                   key={point}
+                  variants={listItemVariants}
                   className="flex items-start gap-2 text-sm"
                   style={{ color: "var(--cp-text-muted)" }}
                 >
@@ -72,29 +100,34 @@ export default function AISpotlight() {
                     style={{ color: "var(--cp-accent)" }}
                   />
                   {point}
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="p-8 rounded-2xl transition-shadow duration-200 hover:shadow-lg hover:shadow-[var(--cp-teal)]/5"
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+            whileHover={{ y: -6, transition: { duration: 0.2 } }}
+            className="p-8 rounded-2xl relative overflow-hidden"
             style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)" }}
           >
-            <div
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 pointer-events-none"
+              style={{ background: "var(--cp-teal)" }}
+            />
+            <motion.div
               className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
               style={{ background: "var(--cp-teal-dim)" }}
+              whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+              transition={{ duration: 0.4 }}
             >
               <IoChatbubbleEllipsesOutline
                 size={20}
                 style={{ color: "var(--cp-teal)" }}
               />
-            </div>
+            </motion.div>
             <h3 className="font-display text-xl font-semibold mb-2">
               Interview prep assistant
             </h3>
@@ -102,14 +135,21 @@ export default function AISpotlight() {
               A chat assistant that knows which role you&apos;re prepping for and
               remembers the conversation.
             </p>
-            <ul className="flex flex-col gap-2.5">
+            <motion.ul
+              className="flex flex-col gap-2.5"
+              variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               {[
                 "Generates questions specific to each saved role",
                 "Keeps context across a multi-turn conversation",
                 "Suggests follow-up prompts to go deeper",
               ].map((point) => (
-                <li
+                <motion.li
                   key={point}
+                  variants={listItemVariants}
                   className="flex items-start gap-2 text-sm"
                   style={{ color: "var(--cp-text-muted)" }}
                 >
@@ -119,9 +159,9 @@ export default function AISpotlight() {
                     style={{ color: "var(--cp-teal)" }}
                   />
                   {point}
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           </motion.div>
         </div>
       </div>

@@ -26,6 +26,7 @@ export default function DashboardPage() {
     if (!session) return;
     fetchStats()
       .then(setStats)
+      .catch(() => setStats(null))
       .finally(() => setLoading(false));
   }, [session]);
 

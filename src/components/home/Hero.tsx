@@ -1,27 +1,34 @@
 "use client";
 
+import { useRef, useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { IoArrowForward, IoSparklesOutline } from "react-icons/io5";
 import { authClient } from "@/lib/auth-client";
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-};
-
 const stagger = {
   animate: {
-    transition: { staggerChildren: 0.12 },
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const wordReveal = {
+  initial: { opacity: 0, y: 16, filter: "blur(4px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
   },
 };
 
 const pillMotion = {
-  initial: { opacity: 0, scale: 0.8 },
+  initial: { opacity: 0, scale: 0.6, y: 20 },
   animate: (delay: number) => ({
     opacity: 1,
     scale: 1,
-    transition: { delay: 1.2 + delay, duration: 0.5 },
+    y: 0,
+    transition: { delay: 1.0 + delay, duration: 0.6, type: "spring" as const, stiffness: 200, damping: 15 },
   }),
 };
 
@@ -32,7 +39,7 @@ const floatingPills = [
   { text: "Cover Letters", x: "18%", y: "55%", delay: 0.8 },
 ];
 
-const particles = Array.from({ length: 20 }, (_, i) => ({
+const particles = Array.from({ length: 25 }, (_, i) => ({
   id: i,
   x: Math.random() * 100,
   y: Math.random() * 100,
@@ -41,17 +48,74 @@ const particles = Array.from({ length: 20 }, (_, i) => ({
   delay: Math.random() * 10,
 }));
 
-export default function Hero() {
-  const { data: session } = authClient.useSession();
+function MagneticButton({ children, className, style, href }: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  href: string;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 300, damping: 20 });
+  const springY = useSpring(y, { stiffness: 300, damping: 20 });
+
+  const handleMouse = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.15);
+    y.set((e.clientY - centerY) * 0.15);
+  }, [x, y]);
+
+  const handleLeave = useCallback(() => {
+    x.set(0);
+    y.set(0);
+  }, [x, y]);
 
   return (
-    <section className="relative overflow-hidden px-6 pt-20 pb-16 md:pt-28 md:pb-24">
-      <div
+    <motion.div style={{ x: springX, y: springY }} className="inline-block">
+      <Link
+        ref={ref}
+        href={href}
+        className={className}
+        style={style}
+        onMouseMove={handleMouse}
+        onMouseLeave={handleLeave}
+      >
+        {children}
+      </Link>
+    </motion.div>
+  );
+}
+
+export default function Hero() {
+  const { data: session } = authClient.useSession();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  const heading = "Your job search, flown by a copilot, not a spreadsheet.";
+  const words = heading.split(" ");
+
+  return (
+    <section ref={sectionRef} className="relative overflow-hidden px-6 pt-20 pb-16 md:pt-28 md:pb-24">
+      <motion.div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-3xl opacity-20 pointer-events-none"
-        style={{ background: "var(--cp-accent)" }}
+        style={{ background: "var(--cp-accent)", y: bgY }}
       />
 
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <motion.div
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        style={{ y: bgY }}
+      >
         {particles.map((p) => (
           <motion.div
             key={p.id}
@@ -61,12 +125,12 @@ export default function Hero() {
               top: `${p.y}%`,
               width: p.size,
               height: p.size,
-              background: "var(--cp-accent)",
+              background: p.id % 3 === 0 ? "var(--cp-teal)" : "var(--cp-accent)",
               opacity: 0.15,
             }}
             animate={{
               y: [0, -30, 0],
-              opacity: [0.1, 0.3, 0.1],
+              opacity: [0.08, 0.3, 0.08],
             }}
             transition={{
               duration: p.duration,
@@ -76,16 +140,17 @@ export default function Hero() {
             }}
           />
         ))}
-      </div>
+      </motion.div>
 
       <motion.div
         className="relative max-w-4xl mx-auto text-center"
         variants={stagger}
         initial="initial"
         animate="animate"
+        style={{ y: textY, opacity }}
       >
         <motion.div
-          variants={fadeInUp}
+          variants={wordReveal}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono-label uppercase mb-6"
           style={{
             background: "var(--cp-surface)",
@@ -93,21 +158,35 @@ export default function Hero() {
             color: "var(--cp-accent)",
           }}
         >
-          <IoSparklesOutline size={14} />
+          <motion.span
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+          >
+            <IoSparklesOutline size={14} />
+          </motion.span>
           AI-powered job search
         </motion.div>
 
         <motion.h1
-          variants={fadeInUp}
           className="font-display text-4xl md:text-6xl font-semibold leading-[1.1] max-w-3xl mx-auto"
         >
-          Your job search,{" "}
-          <span className="gradient-text-accent">flown by a copilot</span>,
-          not a spreadsheet.
+          {words.map((word, i) => (
+            <motion.span
+              key={i}
+              className="inline-block mr-[0.3em]"
+              variants={wordReveal}
+            >
+              {word === "copilot," || word === "copilot" ? (
+                <span className="gradient-text-accent">{word}</span>
+              ) : (
+                word
+              )}
+            </motion.span>
+          ))}
         </motion.h1>
 
         <motion.p
-          variants={fadeInUp}
+          variants={wordReveal}
           className="text-base md:text-lg mt-6 max-w-xl mx-auto"
           style={{ color: "var(--cp-text-muted)" }}
         >
@@ -117,13 +196,13 @@ export default function Hero() {
         </motion.p>
 
         <motion.div
-          variants={fadeInUp}
+          variants={wordReveal}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10"
         >
           {session ? (
-            <Link
+            <MagneticButton
               href="/dashboard"
-              className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-[var(--cp-accent)]/20"
+              className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse"
               style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
             >
               Continue to dashboard
@@ -131,12 +210,12 @@ export default function Hero() {
                 size={16}
                 className="transition-transform duration-200 group-hover:translate-x-1"
               />
-            </Link>
+            </MagneticButton>
           ) : (
             <>
-              <Link
+              <MagneticButton
                 href="/signup"
-                className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-[var(--cp-accent)]/20"
+                className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse"
                 style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
               >
                 Get started free
@@ -144,10 +223,10 @@ export default function Hero() {
                   size={16}
                   className="transition-transform duration-200 group-hover:translate-x-1"
                 />
-              </Link>
-              <Link
+              </MagneticButton>
+              <MagneticButton
                 href="/jobs"
-                className="px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:border-[var(--cp-accent)]"
+                className="px-6 py-3 rounded-lg text-sm font-medium btn-press hover:border-[var(--cp-accent)]"
                 style={{
                   background: "var(--cp-surface)",
                   border: "1px solid var(--cp-border)",
@@ -155,7 +234,7 @@ export default function Hero() {
                 }}
               >
                 Browse jobs
-              </Link>
+              </MagneticButton>
             </>
           )}
         </motion.div>
@@ -179,7 +258,12 @@ export default function Hero() {
               initial="initial"
               animate="animate"
             >
-              {pill.text}
+              <motion.span
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: pill.delay * 2 }}
+              >
+                {pill.text}
+              </motion.span>
             </motion.div>
           ))}
         </div>

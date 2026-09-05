@@ -96,3 +96,230 @@ body {
     --border-angle: 360deg;
   }
 }
+
+/* ===== SMOOTH THEME TRANSITION ===== */
+html {
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+html *,
+html *::before,
+html *::after {
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* ===== GRADIENT MESH BACKGROUND ===== */
+.gradient-mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, var(--cp-accent-dim), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, var(--cp-teal-dim), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 50%, var(--cp-surface), transparent);
+  opacity: 0.6;
+}
+
+/* ===== GLOW EFFECTS ===== */
+.glow-accent {
+  box-shadow:
+    0 0 20px var(--cp-accent-dim),
+    0 0 60px var(--cp-accent-dim);
+}
+
+.glow-teal {
+  box-shadow:
+    0 0 20px var(--cp-teal-dim),
+    0 0 60px var(--cp-teal-dim);
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px var(--cp-accent-dim),
+      0 0 60px var(--cp-accent-dim);
+  }
+  50% {
+    box-shadow:
+      0 0 30px var(--cp-accent-dim),
+      0 0 80px var(--cp-accent-dim),
+      0 0 120px var(--cp-accent-dim);
+  }
+}
+
+/* ===== CURSOR GLOW ===== */
+.cursor-glow {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, var(--cp-accent-dim), transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cursor-glow.active {
+  opacity: 1;
+}
+
+/* ===== SECTION REVEAL ANIMATIONS ===== */
+.section-reveal {
+  opacity: 0;
+  transform: scale(0.97) translateY(20px);
+  filter: blur(6px);
+  transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
+}
+
+.section-reveal.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  filter: blur(0);
+}
+
+/* ===== TEXT REVEAL ===== */
+.text-reveal-word {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.text-reveal-word > span {
+  display: inline-block;
+}
+
+/* ===== 3D TILT CARD ===== */
+.tilt-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.tilt-card-inner {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* ===== ENHANCED BUTTON PRESS ===== */
+.btn-press {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-press:active {
+  transform: scale(0.97) !important;
+}
+
+/* ===== SCROLL PROGRESS BAR ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cp-accent), var(--cp-teal));
+  z-index: 100;
+  transition: width 0.1s linear;
+  transform-origin: left;
+}
+
+/* ===== STAGGERED LIST ITEM REVEAL ===== */
+.stagger-list-item {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.stagger-list-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===== ANIMATED UNDERLINE ===== */
+.animated-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.animated-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cp-accent), var(--cp-teal));
+  transition: width 0.3s ease;
+}
+
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+/* ===== ENHANCED FAQ ===== */
+.faq-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.faq-content.open {
+  grid-template-rows: 1fr;
+}
+
+.faq-content > div {
+  overflow: hidden;
+}
+
+/* ===== FLOATING ANIMATION ===== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ===== SHIMMER EFFECT ===== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cp-accent-dim) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ===== ICON DRAW IN ===== */
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.icon-draw {
+  animation: draw-in 0.6s ease forwards;
+}
+
+/* ===== NUMBER COUNTER GLOW ===== */
+.counter-glow {
+  text-shadow: 0 0 20px var(--cp-accent-dim);
+}
