@@ -8,6 +8,7 @@ import {
   IoSparklesOutline,
   IoChatbubbleEllipsesOutline,
   IoAddCircleOutline,
+  IoArrowForward,
 } from "react-icons/io5";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { fetchStats } from "@/lib/api/stats";
@@ -36,42 +37,65 @@ export default function DashboardPage() {
 
   return (
     <div className="px-6 py-16 max-w-6xl mx-auto min-h-screen">
-      <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
+      <div className="flex items-center justify-between mb-8 md:mb-10 flex-wrap gap-4">
         <div>
           <p className="font-mono-label text-xs uppercase" style={{ color: "var(--cp-accent)" }}>
             Overview
           </p>
           <h1 className="font-display text-3xl font-semibold mt-3">Dashboard</h1>
         </div>
-        <Link
-          href="/jobs/add"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium"
-          style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
-        >
-          <IoAddCircleOutline size={16} />
-          Save a job
-        </Link>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/jobs"
+            className="flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors"
+            style={{ borderColor: "var(--cp-border)", background: "var(--cp-surface)", color: "var(--cp-text)" }}
+          >
+            Browse jobs
+            <IoArrowForward size={15} />
+          </Link>
+          <Link
+            href="/jobs/add"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-transform"
+            style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
+          >
+            <IoAddCircleOutline size={16} />
+            Save a job
+          </Link>
+        </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" aria-live="polite" aria-busy="true">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-32 rounded-2xl animate-pulse" style={{ background: "var(--cp-surface)" }} />
           ))}
         </div>
       ) : stats && stats.totalJobs === 0 ? (
-        <div className="flex flex-col items-center py-24 text-center">
-          <IoBriefcaseOutline size={32} style={{ color: "var(--cp-text-faint)" }} />
-          <p className="text-sm mt-4 mb-6" style={{ color: "var(--cp-text-muted)" }}>
-            No data yet — save your first role to see stats here.
+        <div className="flex flex-col items-center py-20 text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-5" style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)" }}>
+            <IoBriefcaseOutline size={28} style={{ color: "var(--cp-text-faint)" }} />
+          </div>
+          <h2 className="font-display text-2xl font-semibold">Your pipeline is waiting</h2>
+          <p className="text-sm mt-3 max-w-md" style={{ color: "var(--cp-text-muted)" }}>
+            Save your first role to start tracking responses, scores, and interview momentum.
           </p>
-          <Link
-            href="/jobs"
-            className="px-5 py-2.5 rounded-lg text-sm font-medium"
-            style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
-          >
-            Browse jobs
-          </Link>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/jobs/add"
+              className="px-5 py-2.5 rounded-lg text-sm font-medium"
+              style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
+            >
+              Save a job
+            </Link>
+            <Link
+              href="/jobs"
+              className="px-5 py-2.5 rounded-lg text-sm font-medium"
+              style={{ background: "var(--cp-surface)", border: "1px solid var(--cp-border)", color: "var(--cp-text)" }}
+            >
+              Browse jobs
+            </Link>
+          </div>
         </div>
       ) : stats ? (
         <>

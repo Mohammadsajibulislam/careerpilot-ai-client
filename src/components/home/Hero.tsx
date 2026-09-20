@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useCallback } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { IoArrowForward, IoSparklesOutline } from "react-icons/io5";
@@ -21,23 +21,6 @@ const wordReveal = {
     transition: { duration: 0.5, ease: "easeOut" as const },
   },
 };
-
-const pillMotion = {
-  initial: { opacity: 0, scale: 0.6, y: 20 },
-  animate: (delay: number) => ({
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { delay: 1.0 + delay, duration: 0.6, type: "spring" as const, stiffness: 200, damping: 15 },
-  }),
-};
-
-const floatingPills = [
-  { text: "AI Matching", x: "-20%", y: "15%", delay: 0.2 },
-  { text: "Smart Pipeline", x: "20%", y: "10%", delay: 0.6 },
-  { text: "Interview Prep", x: "-15%", y: "60%", delay: 0.4 },
-  { text: "Cover Letters", x: "18%", y: "55%", delay: 0.8 },
-];
 
 const particles = Array.from({ length: 25 }, (_, i) => ({
   id: i,
@@ -149,24 +132,6 @@ export default function Hero() {
         animate="animate"
         style={{ y: textY, opacity }}
       >
-        <motion.div
-          variants={wordReveal}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono-label uppercase mb-6"
-          style={{
-            background: "var(--cp-surface)",
-            border: "1px solid var(--cp-border)",
-            color: "var(--cp-accent)",
-          }}
-        >
-          <motion.span
-            animate={{ rotate: [0, 15, -15, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-          >
-            <IoSparklesOutline size={14} />
-          </motion.span>
-          AI-powered job search
-        </motion.div>
-
         <motion.h1
           className="font-display text-4xl md:text-6xl font-semibold leading-[1.1] max-w-3xl mx-auto"
         >
@@ -202,7 +167,7 @@ export default function Hero() {
           {session ? (
             <MagneticButton
               href="/dashboard"
-              className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse"
+              className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse shadow-sm"
               style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
             >
               Continue to dashboard
@@ -215,7 +180,7 @@ export default function Hero() {
             <>
               <MagneticButton
                 href="/signup"
-                className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse"
+                className="group flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium btn-press glow-pulse shadow-sm"
                 style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
               >
                 Get started free
@@ -226,7 +191,7 @@ export default function Hero() {
               </MagneticButton>
               <MagneticButton
                 href="/jobs"
-                className="px-6 py-3 rounded-lg text-sm font-medium btn-press hover:border-[var(--cp-accent)]"
+                className="px-6 py-3 rounded-lg text-sm font-medium btn-press transition-all duration-200 hover:border-[var(--cp-accent)] hover:bg-[var(--cp-surface-hover)]"
                 style={{
                   background: "var(--cp-surface)",
                   border: "1px solid var(--cp-border)",
@@ -238,36 +203,18 @@ export default function Hero() {
             </>
           )}
         </motion.div>
+
+        {!session && (
+          <motion.p
+            variants={wordReveal}
+            className="mt-4 text-xs md:text-sm"
+            style={{ color: "var(--cp-text-faint)" }}
+          >
+            No credit card required • Simple pipeline tracking for your job search
+          </motion.p>
+        )}
       </motion.div>
 
-      {!session && (
-        <div className="hidden md:block relative max-w-4xl mx-auto h-0">
-          {floatingPills.map((pill) => (
-            <motion.div
-              key={pill.text}
-              className="absolute text-xs px-3 py-1.5 rounded-full pointer-events-none"
-              style={{
-                left: `calc(50% + ${pill.x})`,
-                top: pill.y,
-                background: "var(--cp-surface)",
-                border: "1px solid var(--cp-border)",
-                color: "var(--cp-text-muted)",
-              }}
-              custom={pill.delay}
-              variants={pillMotion}
-              initial="initial"
-              animate="animate"
-            >
-              <motion.span
-                animate={{ y: [0, -4, 0] }}
-                transition={{ duration: 3, repeat: Infinity, delay: pill.delay * 2 }}
-              >
-                {pill.text}
-              </motion.span>
-            </motion.div>
-          ))}
-        </div>
-      )}
     </section>
   );
 }

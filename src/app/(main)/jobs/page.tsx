@@ -21,21 +21,6 @@ export default function JobsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // ⭐ Render-time state adjustment — React-এর official recommended pattern
-  // effect-এ setState করার বদলে, filter change ধরা পড়লে render চলাকালীনই page reset করা হচ্ছে
-  const [prevFilters, setPrevFilters] = useState({ search, category, jobType, sort });
-  if (
-    search !== prevFilters.search ||
-    category !== prevFilters.category ||
-    jobType !== prevFilters.jobType ||
-    sort !== prevFilters.sort
-  ) {
-    setPrevFilters({ search, category, jobType, sort });
-    if (page !== 1) setPage(1);
-  }
-
-  // একটামাত্র effect — debounce সহ, সব setState call করা হচ্ছে setTimeout callback-এর ভিতরে
-  // (effect body-তে সরাসরি না, তাই React-এর warning আসবে না)
   useEffect(() => {
     let ignore = false;
 
@@ -63,9 +48,37 @@ export default function JobsPage() {
     };
   }, [search, category, jobType, sort, page]);
 
+  const resetFilters = () => {
+    setSearch("");
+    setCategory("all");
+    setJobType("all");
+    setSort("newest");
+    setPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    setPage(1);
+  };
+
+  const handleJobTypeChange = (value: string) => {
+    setJobType(value);
+    setPage(1);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSort(value);
+    setPage(1);
+  };
+
   return (
     <div className="px-6 py-16 max-w-6xl mx-auto min-h-screen">
-      <div className="mb-10">
+      <div className="mb-8 md:mb-10">
         <p className="font-mono-label text-xs uppercase" style={{ color: "var(--cp-accent)" }}>
           Open roles
         </p>
@@ -79,16 +92,17 @@ export default function JobsPage() {
 
       <JobFilters
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={handleSearchChange}
         category={category}
-        onCategoryChange={setCategory}
+        onCategoryChange={handleCategoryChange}
         jobType={jobType}
-        onJobTypeChange={setJobType}
+        onJobTypeChange={handleJobTypeChange}
         sort={sort}
-        onSortChange={setSort}
+        onSortChange={handleSortChange}
+        onResetFilters={resetFilters}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 md:mt-10">
         {loading &&
           Array.from({ length: 8 }).map((_, i) => <JobCardSkeleton key={i} />)}
 
@@ -104,6 +118,14 @@ export default function JobsPage() {
             <p className="text-sm mt-4" style={{ color: "var(--cp-text-muted)" }}>
               No roles match your filters yet. Try widening your search.
             </p>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="mt-6 rounded-lg px-4 py-2.5 text-sm font-medium"
+              style={{ background: "var(--cp-accent)", color: "var(--cp-bg)" }}
+            >
+              Reset filters
+            </button>
           </div>
         )}
 
