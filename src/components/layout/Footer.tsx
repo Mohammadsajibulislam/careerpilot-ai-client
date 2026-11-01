@@ -83,7 +83,7 @@ export default function Footer() {
                 GitHub
               </a>
               <a
-                href="https://www.linkedin.com"
+                href="https://www.linkedin.com/in/mohammadsajibulislam/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm transition-colors hover:opacity-80"
@@ -93,12 +93,12 @@ export default function Footer() {
                 LinkedIn
               </a>
               <a
-                href="mailto:hello@careerpilot.ai"
+                href="mailto:mohammadsajibulislam2024@gmail.com"
                 className="flex items-center gap-2 text-sm transition-colors hover:opacity-80"
                 style={mutedStyle}
               >
                 <IoMailOutline size={16} />
-                hello@careerpilot.ai
+                mohammadsajibulislam2024@gmail.com
               </a>
             </div>
           </div>

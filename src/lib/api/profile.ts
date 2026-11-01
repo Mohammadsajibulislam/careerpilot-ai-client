@@ -7,7 +7,16 @@ export async function fetchProfile(): Promise<UserProfile> {
     credentials: "include",
   });
   if (!res.ok) throw new Error("Failed to fetch profile");
-  return res.json();
+
+  const data = await res.json();
+  // Guard against legacy/partial documents that are missing fields.
+  return {
+    userId: data.userId ?? "",
+    resumeText: typeof data.resumeText === "string" ? data.resumeText : "",
+    skills: Array.isArray(data.skills) ? data.skills : [],
+    resumeFileName: data.resumeFileName ?? "",
+    updatedAt: data.updatedAt,
+  };
 }
 
 export async function updateProfile(data: { resumeText: string; skills: string[] }): Promise<void> {

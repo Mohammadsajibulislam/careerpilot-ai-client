@@ -9,7 +9,9 @@ import Toast from "@/components/ui/Toast";
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
-async function uploadResume(file: File): Promise<{ message: string; fileName: string; textLength: number }> {
+async function uploadResume(
+  file: File
+): Promise<{ message: string; fileName: string; textLength: number; resumeText: string; skills: string[] }> {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -45,8 +47,9 @@ export default function ProfilePage() {
     (async () => {
       try {
         const profile = await fetchProfile();
-        setResumeText(profile.resumeText);
-        setSkills(profile.skills);
+        setResumeText(profile.resumeText ?? "");
+        setSkills(Array.isArray(profile.skills) ? profile.skills : []);
+        setResumeFileName(profile.resumeFileName ?? "");
       } catch {
         showToast("Couldn't load your profile", "error");
       } finally {
@@ -88,7 +91,16 @@ export default function ProfilePage() {
     try {
       const result = await uploadResume(file);
       setResumeFileName(result.fileName);
-      showToast("Resume uploaded — text extracted", "success");
+      setResumeText(result.resumeText ?? "");
+      if (Array.isArray(result.skills) && result.skills.length > 0) {
+        setSkills((current) => Array.from(new Set([...current, ...result.skills])));
+      }
+      showToast(
+        result.skills?.length
+          ? `Resume uploaded — ${result.skills.length} skill(s) detected`
+          : "Resume uploaded — text extracted",
+        "success"
+      );
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Upload failed", "error");
     } finally {
