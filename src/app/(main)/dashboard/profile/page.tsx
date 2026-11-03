@@ -9,6 +9,10 @@ import Toast from "@/components/ui/Toast";
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
+// Vercel rejects serverless request bodies over 4.5 MB before they reach the
+// API, so keep a margin and validate on the client for a clear message.
+const MAX_RESUME_BYTES = 4 * 1024 * 1024;
+
 async function uploadResume(
   file: File
 ): Promise<{ message: string; fileName: string; textLength: number; resumeText: string; skills: string[] }> {
@@ -22,8 +26,8 @@ async function uploadResume(
   });
 
   if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Upload failed");
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Upload failed (${res.status})`);
   }
 
   return res.json();
@@ -87,6 +91,12 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > MAX_RESUME_BYTES) {
+      showToast("File is too large — max 4 MB", "error");
+      e.target.value = "";
+      return;
+    }
+
     setUploading(true);
     try {
       const result = await uploadResume(file);
@@ -148,7 +158,7 @@ export default function ProfilePage() {
               {uploading ? "Uploading..." : resumeFileName ? resumeFileName : "Click to upload"}
             </p>
             <p className="text-xs mt-0.5" style={{ color: "var(--cp-text-faint)" }}>
-              Max 5 MB. Text will be extracted automatically.
+              Max 4 MB. Text will be extracted automatically.
             </p>
           </div>
         </div>
